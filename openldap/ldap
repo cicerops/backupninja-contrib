@@ -1,0 +1,74 @@
+# -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
+# vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
+#
+# openldap backup handler script for backupninja
+#
+# 2012-11-15 Andreas Motl <andreas.motl@ilo.de>
+# Tuned to only use "slapcat" with OpenLDAP 2.4
+# and the "cn=config dynamic configuration database",
+# since "slapd.conf" is no more.
+# Got rid of all "ldapsearch" specific stuff
+# and some more code and configuration options,
+# i.e. "always backup all databases" and "never restart".
+#
+# For infos about the "ldapsearch" method, please reconsider
+# /usr/share/doc/backupninja/examples/example.ldap
+# https://bugs.launchpad.net/ubuntu/+source/backupninja/+bug/289957
+#
+getconf backupdir /var/backups/ldap
+getconf method slapcat
+getconf compress yes
+
+status="ok"
+
+[ "$method" == "slapcat" ] || fatal "We only support 'method = slapcat'"
+
+[ -d $backupdir ] || mkdir -p $backupdir
+[ -d $backupdir ] || fatal "Backup directory '$backupdir'"
+
+dumpdir="$backupdir"
+[ -d $dumpdir ] || mkdir -p $dumpdir
+
+dbsuffixes=$(slapcat -n 0 | grep '^olcSuffix' | cut -d ' ' -f 2)
+dbsuffixes="cn=config $dbsuffixes"
+
+for dbsuffix in $dbsuffixes; do
+
+      # some databases don't have suffix (like monitor), skip these
+      if [ "$dbsuffix" == "" ]; then
+         continue;
+      fi
+
+      execstr="$SLAPCAT -b '$dbsuffix'"
+
+      if [ ! $test ]; then
+
+         ext=
+         if [ "$compress" == "yes" ]; then
+            ext=".gz"
+         fi
+         touch $dumpdir/$dbsuffix.ldif$ext
+         if [ ! -f $dumpdir/$dbsuffix.ldif$ext ]; then
+            fatal "Couldn't create ldif dump file: $dumpdir/$dbsuffix.ldif$ext"
+         fi
+
+         if [ "$compress" == "yes" ]; then
+            execstr="$execstr | $GZIP $GZIP_OPTS > $dumpdir/$dbsuffix.ldif.gz"
+         else
+            execstr="$execstr > $dumpdir/$dbsuffix.ldif"
+         fi
+         debug "$execstr"
+         output=`su root -c "set -o pipefail ; $execstr" 2>&1`
+         code=$?
+         if [ "$code" == "0" ]; then
+            debug $output
+            info "Successfully finished ldif export of $dbsuffix"
+         else
+            warning $output
+            warning "Failed ldif export of $dbsuffix"
+         fi
+
+      fi
+done
+
+return 0
