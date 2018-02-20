@@ -35,10 +35,10 @@ for database in $databases; do
          output=`su root -c "set -o pipefail ; $execstr" 2>&1`
          code=$?
          if [ "$code" == "0" ]; then
-            debug $output
+            debug "$output"
             info "Successfully finished InfluxDB backup of $database"
          else
-            warning $output
+            warning "$output"
             warning "Failed InfluxDB backup of $database"
          fi
 
