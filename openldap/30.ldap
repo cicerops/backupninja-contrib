@@ -1,0 +1,16 @@
+##
+## configuration file for openldap backups 
+##
+## The LDIFs generated are suitable for use with slapadd. As the 
+## entries are in database order, not superior first order, they
+## cannot be loaded with ldapadd without being reordered.
+##
+
+## backupdir (default /var/backups/ldap): the destination for the backups
+# backupdir = /var/backups/ldap
+
+# We're using the "slapcat" method by now
+# method = slapcat
+
+## compress (default yes): if set to yes, ldif exports are gzipped.
+# compress = yes
