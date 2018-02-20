@@ -1,7 +1,7 @@
 # -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
 # vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
 #
-# InfluxDB backup handler script for backupninja
+# InfluxDB backup handler script for Backupninja
 #
 # 2016-01-27 Andreas Motl <andreas.motl@elmyra.de>
 #

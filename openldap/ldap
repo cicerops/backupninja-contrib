@@ -1,19 +1,23 @@
 # -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
 # vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
 #
-# openldap backup handler script for backupninja
+# OpenLDAP backup handler script for Backupninja
 #
-# 2012-11-15 Andreas Motl <andreas.motl@ilo.de>
-# Tuned to only use "slapcat" with OpenLDAP 2.4
-# and the "cn=config dynamic configuration database",
-# since "slapd.conf" is no more.
-# Got rid of all "ldapsearch" specific stuff
-# and some more code and configuration options,
-# i.e. "always backup all databases" and "never restart".
+# Updates in respect to the vanilla version:
 #
-# For infos about the "ldapsearch" method, please reconsider
-# /usr/share/doc/backupninja/examples/example.ldap
-# https://bugs.launchpad.net/ubuntu/+source/backupninja/+bug/289957
+# 2012-11-15 Andreas Motl <andreas.motl@elmyra.de>
+#
+#   Only use "slapcat" starting with OpenLDAP 2.4 because "slapd.conf" is no more.
+#   As the "cn=config" dynamic configuration database now contains the configuration,
+#   it should also be included into the backup.
+#
+#   Now, the module is free of all "ldapsearch" specific stuff
+#   and some related code and configuration options. It follows the principle
+#   "always backup all databases" and "never restart" the OpenLDAP server.
+#
+#   For infos about the now deprecated "ldapsearch" method,
+#   please reconsider /usr/share/doc/backupninja/examples/example.ldap and
+#   see also https://bugs.launchpad.net/ubuntu/+source/backupninja/+bug/289957.
 #
 getconf backupdir /var/backups/ldap
 getconf method slapcat
