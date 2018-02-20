@@ -1,0 +1,19 @@
+##
+## Configuration file for InfluxDB backups 
+##
+## The snapshots are made with InfluxDB's backup mechanisms.
+## See also:
+## https://docs.influxdata.com/influxdb/v0.9/administration/backup_and_restore/
+## 
+## Please stop your influxd instance before restoring backups.
+##
+## Test this plugin by::
+##
+##     backupninja --debug --test --now --run /etc/backup.d/40.influxdb
+##
+
+## backupdir (default /var/backups/influxdb): the destination for the backups
+# backupdir = /var/backups/influxdb
+
+## list the database names, the default is to backup all databases
+# databases = 
